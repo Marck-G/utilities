@@ -1,0 +1,77 @@
+#! /usr/bin/env python3
+import sys
+import getopt
+__line_width__ = 65
+
+
+def help():
+    __table_width = 17
+    print("| CSV-EXTRACTOR |".center(__line_width__, "="))
+    print("\nExtract the specific column from csv file\n")
+    print("Usage: \n  csv-seaprtor.py [OPTIONS]     ")
+    print("-[OPTIONS]: ")
+    print("  -h, --help".ljust(__table_width), end="  ")
+    print(" ".ljust(__table_width - 6), end="  ")
+    print("show this help")
+    print("  -f, --file".ljust(__table_width), end="  ")
+    print("<csv_file>".ljust(__table_width - 6), end="  ")
+    print("set the csv file")
+    print("  -c, --column".ljust(__table_width), end="  ")
+    print("<column>".ljust(__table_width- 6), end="  ")
+    print("set the csv column pos")
+    print("  -s, --separator".ljust(__table_width), end="  ")
+    print("<separator>".ljust(__table_width- 6), end="  ")
+    print("set the csv separator char")
+    print("  -o, --output".ljust(__table_width), end="  ")
+    print("<file>".ljust(__table_width- 6), end="  ")
+    print("[optional] set the output file\n")
+    print("[ dev: marck.guzman.dev@gmail.com ]".center(__line_width__, "-"))
+
+def extractor(file, index, sep, o = False, _print = False):
+    f = open(file, "r")
+    index = int(index) -1
+    out = ""
+    for line in f:
+        cols = line.split(sep);
+        if len(cols) > index :
+            out = out + cols[index ] + "\n"
+    f.close()
+    if o:
+        f = open(o, "w")
+        f.writelines(out)
+        f.close()
+        print("| File saved |".center(__line_width__, "="))
+    else:
+        if _print:
+            print("Data extracted:")
+            print(out)
+        return out
+
+def main(args):
+    __separator = ","
+    __col_index = 0
+    __file = False
+    __out = False
+    try:
+        opt, arg= getopt.getopt(args,"hs:c:f:o:",["help", "separator", "column", "file", "output"])
+    except  getopt.GetoptError  as err:
+        help()
+        sys.exit(2)
+    for o,v in opt:
+        if o in ("-f", "--file"):
+            __file = v
+        elif o in ("-s", "--separator"):
+            __separator = v
+        elif o in ("-c", "--column"):
+            __col_index = v
+        elif o in ("-o", "--output"):
+            __out = v
+        else:
+            help()
+            sys.exit()
+    extractor(__file, __col_index, __separator, __out, True)
+
+
+if __name__ == "__main__":    
+    main(sys.argv[1:])
+   
